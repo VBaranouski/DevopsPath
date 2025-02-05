@@ -1,48 +1,76 @@
-#! bin/bash
+#!/bin/bash
 
-git_email="vladbars@gmail.com"
-git_user="vbaranovski"
+# Устанавливаем переменные для Git
+GIT_EMAIL="vladbars@gmail.com"
+GIT_USER="vbaranovski"
+REPO_URL="https://github.com/VBaranouski/DevopsPath.git"
+REPO_DIR="$HOME/Repositories/DevopsPath"
+HTML_FILE="ApacheHomepage.html"
+DOCKER_IMAGE="docker_hello"
+DOCKER_CONTAINER="privet_sdl"
 
-cd ~/
-echo "Creating Repository folder"
+# Создаем папку для репозиториев, если её нет
+echo "Создание папки для репозиториев..."
+mkdir -p "$HOME/Repositories"
 
-mkdir Repositories || cd Repositories
+# Переходим в папку
+cd "$HOME/Repositories"
 
-echo "Cloning Repo if not exist, or pulling latest changes"
-git clone https://github.com/VBaranouski/DevopsPath.git || cd DevopsPath/ 
-git pull
+# Клонируем репозиторий, если его нет, иначе обновляем
+if [ ! -d "$REPO_DIR/.git" ]; then
+    echo "Клонируем репозиторий..."
+    git clone "$REPO_URL"
+else
+    echo "Обновляем репозиторий..."
+    cd "$REPO_DIR"
+    git pull
+fi
 
-echo '<!DOCTYPE html>
+# Переход в репозиторий
+cd "$REPO_DIR"
+
+# Создаем HTML-файл
+echo "Создаем/обновляем $HTML_FILE..."
+cat > "$HTML_FILE" <<EOF
+<!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SDL</title>
 </head>
 <body>
-    <h1>Привет SDL:)) еще раз 11 </h1>
+    <h1>Привет SDL:)) еще раз 20</h1>
 </body>
-</html>' > ApacheHomepage.html
+</html>
+EOF
 
-git config --global user.email $git_email
-git config --global user.name $git_user
-git add -A && git commit -m 'adding homepage' && git push origin main
+# Настраиваем Git
+echo "Настраиваем Git..."
+git config --global user.email "$GIT_EMAIL"
+git config --global user.name "$GIT_USER"
 
-echo 'stop running containers'
-docker stop privetsdl
-docker rm privetsdl
-docker rmi -f dockerhellosdl
+# Добавляем изменения и отправляем в репозиторий
+echo "Добавляем и отправляем изменения в репозиторий..."
+git add "$HTML_FILE"
+git commit -m "Homepage" && git push origin main
 
+# Останавливаем и удаляем старый контейнер
+echo "Останавливаем и удаляем контейнер..."
+docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && docker stop "$DOCKER_CONTAINER"
+docker rm -f "$DOCKER_CONTAINER"
+docker rmi -f "$DOCKER_IMAGE"
+
+# Даем время на завершение процессов
 sleep 5
 
-echo 'Build docker image'
-docker build -t dockerhellosdl .
+# Собираем новый Docker-образ
+echo "Собираем Docker-образ..."
+docker build -t "$DOCKER_IMAGE" .
 
+# Даем время перед запуском
 sleep 5
 
-echo 'Run docker container'
-docker run -d -p 8090:80 --name privetsdl dockerhellosdl
-
-
-
-
-
+# Запускаем контейнер
+echo "Запускаем Docker-контейнер..."
+docker run -d --name "$DOCKER_CONTAINER" -p 8090:80 "$DOCKER_IMAGE"
