@@ -9,7 +9,7 @@ echo “Creating Repository folder”
 mkdir Repositories || cd Repositories
 
 echo “Cloning Repo if not exist, or pulling latest changes“
-git clone https://github.com/VBaranouski/DevopsPath.git || cd DevopsPath/ || git pull  
+git clone https://github.com/VBaranouski/DevopsPath.git || cd DevopsPath/ || git pull
 
 echo '<!DOCTYPE html>
 <head>
@@ -18,7 +18,7 @@ echo '<!DOCTYPE html>
     <title>SDL</title>
 </head>
 <body>
-    <h1>Привет SDL:)) еще раз </h1>
+    <h1>Привет SDL:)) еще раз 5 </h1>
 </body>
 </html>' > ApacheHomepage.html
 
