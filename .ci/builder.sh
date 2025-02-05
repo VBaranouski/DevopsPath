@@ -1,5 +1,8 @@
 #! bin/bash
 
+git_email="vladbars@gmail.com"
+git_user="vbaranovski"
+
 cd ~/
 echo “Creating Repository folder”
 
@@ -15,17 +18,26 @@ echo '<!DOCTYPE html>
     <title>SDL</title>
 </head>
 <body>
-    <h1>Привет SDL:))</h1>
+    <h1>Привет SDL:)) еще раз </h1>
 </body>
 </html>' > ApacheHomepage.html
 
-git add -A && git commit -m “adding homepage” && git push origin main
+git config --global user.email $git_email
+git config --global user.name $git_user
+git add -A && git commit -m 'adding homepage' && git push origin main
 
-echo “Building docker image”
+echo 'stop running containers'
+docker stop privetsdl
+docker rm privetsdl
+docker rmi -f dockerhellosdl
+sleep 10
+
+echo 'Build docker image'
 docker build -t dockerhellosdl .
+sleep 5
 
-echo “Running docker container”
-docker run -d -p 8090:80 dockerhellosdl
+echo 'Run docker container'
+docker run -d -p 8090:80 --name privetsdl dockerhellosdl
 
 
 
