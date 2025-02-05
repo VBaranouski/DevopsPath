@@ -4,12 +4,13 @@ git_email="vladbars@gmail.com"
 git_user="vbaranovski"
 
 cd ~/
-echo “Creating Repository folder”
+echo "Creating Repository folder"
 
 mkdir Repositories || cd Repositories
 
-echo “Cloning Repo if not exist, or pulling latest changes“
-git clone https://github.com/VBaranouski/DevopsPath.git || cd DevopsPath/ || git pull
+echo "Cloning Repo if not exist, or pulling latest changes"
+git clone https://github.com/VBaranouski/DevopsPath.git || cd DevopsPath/ 
+git pull
 
 echo '<!DOCTYPE html>
 <head>
@@ -18,7 +19,7 @@ echo '<!DOCTYPE html>
     <title>SDL</title>
 </head>
 <body>
-    <h1>Привет SDL:)) еще раз 5 </h1>
+    <h1>Привет SDL:)) еще раз 11 </h1>
 </body>
 </html>' > ApacheHomepage.html
 
@@ -30,10 +31,12 @@ echo 'stop running containers'
 docker stop privetsdl
 docker rm privetsdl
 docker rmi -f dockerhellosdl
-sleep 10
+
+sleep 5
 
 echo 'Build docker image'
 docker build -t dockerhellosdl .
+
 sleep 5
 
 echo 'Run docker container'
