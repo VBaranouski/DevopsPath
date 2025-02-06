@@ -78,3 +78,5 @@ sleep 5
 echo "Запускаем Docker-контейнер..."
 docker run -d --name "$DOCKER_CONTAINER" -p 8090:80 "$DOCKER_IMAGE"
 
+# Проверка что контейнер запущен
+docker ps -q --filter "name=privet_sdl" | grep -q . && echo "Контейнер запущен на порту 8090"
