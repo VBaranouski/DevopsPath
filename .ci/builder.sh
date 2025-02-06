@@ -3,18 +3,19 @@
 # Устанавливаем переменные для Git
 GIT_EMAIL="vladbars@gmail.com"
 GIT_USER="vbaranovski"
+WORK_DIR="/tmp/Repo"
 REPO_URL="https://github.com/VBaranouski/DevopsPath.git"
-REPO_DIR="$HOME/Repositories/DevopsPath"
+REPO_DIR="$WORK_DIR/DevopsPath"
 HTML_FILE="ApacheHomepage.html"
 DOCKER_IMAGE="docker_hello"
 DOCKER_CONTAINER="privet_sdl"
 
 # Создаем папку для репозиториев, если её нет
 echo "Создание папки для репозиториев..."
-mkdir -p "$HOME/Repositories"
+mkdir -p "$WORK_DIR"
 
 # Переходим в папку
-cd "$HOME/Repositories"
+cd "$WORK_DIR"
 
 # Клонируем репозиторий, если его нет, иначе обновляем
 if [ ! -d "$REPO_DIR/.git" ]; then
@@ -40,7 +41,7 @@ cat > "$HTML_FILE" <<EOF
     <title>SDL</title>
 </head>
 <body>
-    <h1>Привет SDL:)) еще раз 20</h1>
+    <h1>Привет SDL:))</h1>
 </body>
 </html>
 EOF
