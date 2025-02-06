@@ -1,12 +1,15 @@
 #!/bin/bash
 
+# Загружаем переменные из файла .env
+source .env
+
 # Переменные  GIT_EMAIL и GIT_USER передаются в аргументах $1 и $2
 
 # Устанавливаем переменные для Git
-GIT_EMAIL=$1
-GIT_USER=$2
+	#GIT_EMAIL=$1
+	#GIT_USER=$2
 WORK_DIR="/tmp/Repo"
-REPO_URL="https://github.com/VBaranouski/DevopsPath.git"
+REPO_URL="https://$GIT_TOKEN@github.com/VBaranouski/DevopsPath.git"
 REPO_DIR="$WORK_DIR/DevopsPath"
 HTML_FILE="ApacheHomepage.html"
 DOCKER_IMAGE="docker_hello"
@@ -49,9 +52,9 @@ cat > "$HTML_FILE" <<EOF
 EOF
 
 # Настраиваем Git
-echo "Настраиваем Git..."
-git config --global user.email "$GIT_EMAIL"
-git config --global user.name "$GIT_USER"
+	#echo "Настраиваем Git..."
+	#git config --global user.email "$GIT_EMAIL"
+	#git config --global user.name "$GIT_USER"
 
 # Добавляем изменения и отправляем в репозиторий
 echo "Добавляем и отправляем изменения в репозиторий..."
