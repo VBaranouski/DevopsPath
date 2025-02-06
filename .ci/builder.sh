@@ -1,8 +1,10 @@
 #!/bin/bash
 
+# Переменные  GIT_EMAIL и GIT_USER передаются в аргументах $1 и $2
+
 # Устанавливаем переменные для Git
-GIT_EMAIL="vladbars@gmail.com"
-GIT_USER="vbaranovski"
+GIT_EMAIL=$1
+GIT_USER=$2
 WORK_DIR="/tmp/Repo"
 REPO_URL="https://github.com/VBaranouski/DevopsPath.git"
 REPO_DIR="$WORK_DIR/DevopsPath"
@@ -75,3 +77,4 @@ sleep 5
 # Запускаем контейнер
 echo "Запускаем Docker-контейнер..."
 docker run -d --name "$DOCKER_CONTAINER" -p 8090:80 "$DOCKER_IMAGE"
+
