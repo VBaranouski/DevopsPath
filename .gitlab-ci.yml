@@ -24,14 +24,14 @@ stages:          # List of stages for jobs, and their order of execution
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
   tags:
-    - ubuntusrv-docker
+    - new-docker-runner
   script:
     - echo "this run from Docker runner using default image"
 
 unit-test-job:   # This job runs in the test stage.
   stage: test  
   tags:
-    - ubuntusrv-docker
+    - new-docker-runner
   image:
       name: hashicorp/terraform:1.5
       entrypoint: [""]   # It only starts when the job in the build stage completes successfully.
