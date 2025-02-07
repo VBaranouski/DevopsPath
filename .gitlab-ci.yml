@@ -40,6 +40,8 @@ unit-test-job:   # This job runs in the test stage.
     - terraform -version
 
 deploy-job:      # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  stage: deploy
+  tags: 
+    - new-docker-runner  # It only runs when *both* jobs in the test stage complete successfully.
   script:
     - echo "Deploying application..."
