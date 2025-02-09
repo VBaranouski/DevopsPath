@@ -51,7 +51,7 @@ build_html:
           <h1>Привет SDL!:))</h1>
       </body>
       </html>
-      EOF>>
+      EOF
     - echo "Добавляем и отправляем изменения в репозиторий..."
     - git config --global user.email "gitlab-ci@example.com"
     - git config --global user.name "GitLab CI"
