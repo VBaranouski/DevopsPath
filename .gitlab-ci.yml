@@ -68,7 +68,7 @@ build_and_deploy:
     - docker run -d --name "$DOCKER_CONTAINER" -p 8090:80 "$DOCKER_IMAGE"
 
     - docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && echo "Контейнер запущен на порту 8090"
-    - curl localhost:8090 
+    - curl 192.168.1.124:8090 
   only:
     - main
   tags:
