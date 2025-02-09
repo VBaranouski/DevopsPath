@@ -11,10 +11,13 @@ variables:
   DOCKER_IMAGE: "docker_hello"
   DOCKER_CONTAINER: "privet_sdl"
 
+default:
+    tags:
+    - ubuntu-shell
+
+
 clone_repo:
   stage: clone
-  tags:
-    - ubuntu-shell
   script:
     - echo "Создание папки для репозиториев..."
     - mkdir -p "$WORK_DIR"
@@ -29,13 +32,10 @@ clone_repo:
         cd "$REPO_DIR";
         git pull;
       fi
-  only:
-    - main
+
 
 build_html:
   stage: build
-  tags:
-    - ubuntu-shell
   script:
     - cd "$REPO_DIR"
     - echo "Создаем/обновляем $HTML_FILE..."
@@ -68,8 +68,5 @@ build_and_deploy:
     - docker run -d --name "$DOCKER_CONTAINER" -p 8090:80 "$DOCKER_IMAGE"
 
     - docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && echo "Контейнер запущен на порту 8090"
-    - curl http://192.168.1.124:8090
   only:
     - main
-  tags:
-    - ubuntu-shell
