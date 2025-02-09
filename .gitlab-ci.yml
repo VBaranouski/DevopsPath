@@ -14,7 +14,8 @@ variables:
 default:
     tags:
     - ubuntu-shell
-
+    retry: 2
+    timeout: 30m  # Максимальное время выполнения (30 минут)
 
 clone_repo:
   stage: clone
