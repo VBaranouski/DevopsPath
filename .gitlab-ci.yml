@@ -1,13 +1,86 @@
 stages:
-  - run
+  - clone
+  - build
+  - deploy
 
-# Stage 2: Run the application in Docker container
-run_application:
-  stage: run
-  tags: [ubuntu-shell]
-  image: docker:latest
-  services:
-    - docker:20.10.7-dind
+variables:
+  WORK_DIR: "/tmp/Repo"
+  REPO_URL: "https://$GIT_TOKEN@github.com/VBaranouski/DevopsPath.git"
+  REPO_DIR: "$WORK_DIR/DevopsPath"
+  HTML_FILE: "ApacheHomepage.html"
+  DOCKER_IMAGE: "docker_hello"
+  DOCKER_CONTAINER: "privet_sdl"
+
+clone_repo:
+  stage: clone
+  tags:
+    - ubuntu-shell
   script:
-    - echo "Running script"
-    - bash ~/.ci/builder.sh
+    - echo "Создание папки для репозиториев..."
+    - mkdir -p "$WORK_DIR"
+    - cd "$WORK_DIR"
+    - test -n "$GIT_TOKEN" || { echo "GIT_TOKEN не установлен!"; exit 1; }
+    - echo "machine github.com login GIT_TOKEN password $GIT_TOKEN" > ~/.netrc
+    - if [ ! -d "$REPO_DIR/.git" ]; then
+        echo "Клонируем репозиторий...";
+        git clone "$REPO_URL";
+      else
+        echo "Обновляем репозиторий...";
+        cd "$REPO_DIR";
+        git pull;
+      fi
+  only:
+    - main
+
+build_html:
+  stage: build
+  tags:
+    - ubuntu-shell
+  script:
+    - cd "$REPO_DIR"
+    - echo "Создаем/обновляем $HTML_FILE..."
+    - cat > "$HTML_FILE" <<EOF
+      <!DOCTYPE html>
+      <html lang="ru">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>SDL</title>
+      </head>
+      <body>
+          <h1>Привет SDL!:))</h1>
+      </body>
+      </html>
+      EOF
+    - echo "Добавляем и отправляем изменения в репозиторий..."
+    - git config --global user.email "gitlab-ci@example.com"
+    - git config --global user.name "GitLab CI"
+    - git add "$HTML_FILE"
+    - git commit -m "Homepage" || echo "No changes to commit"
+    - git push origin main
+  only:
+    - main
+
+build_and_deploy:
+  stage: deploy
+  script:
+    - echo "Проверяем Docker..."
+    - docker --version || { echo "Docker не установлен!"; exit 1; }
+    - systemctl is-active --quiet docker || { echo "Docker не запущен!"; exit 1; }
+    
+    - echo "Останавливаем и удаляем контейнер..."
+    - docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && docker stop "$DOCKER_CONTAINER"
+    - docker rm -f "$DOCKER_CONTAINER"
+    - docker rmi -f "$DOCKER_IMAGE" || echo "No image to remove"
+
+    - echo "Собираем Docker-образ..."
+    - cd "$REPO_DIR" && docker build -t "$DOCKER_IMAGE" .
+
+    - echo "Запускаем Docker-контейнер..."
+    - docker run -d --name "$DOCKER_CONTAINER" -p 8090:80 "$DOCKER_IMAGE"
+
+    - docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && echo "Контейнер запущен на порту 8090"
+  only:
+    - main
+  tags:
+    - ubuntu-shell
