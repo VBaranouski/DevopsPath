@@ -31,6 +31,8 @@ clone_repo:
         cd "$REPO_DIR";
         git pull;
       fi
+  only:
+    - main
 
 
 build_html:
@@ -41,12 +43,20 @@ build_html:
     - cd "$REPO_DIR"
     - echo "Создаем/обновляем $HTML_FILE..."
     - echo > "$HTML_FILE" "Hello SDL"
+    - cp $HTML_FILE build/
     - echo "Добавляем и отправляем изменения в репозиторий..."
     - git add "$HTML_FILE"
     - git commit -m "Update in Apache homescreen" || echo "No changes to commit"
     - git push origin main
   only:
     - main
+  artifacts:
+    untracked: true
+    when: on_success
+    access: all
+    expire_in: 30 days
+    paths:
+      - build/
 
 build_and_deploy:
   stage: deploy
