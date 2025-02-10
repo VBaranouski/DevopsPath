@@ -23,8 +23,8 @@ clone_repo:
     - echo "Создание папки для репозиториев..."
     - mkdir -p "$WORK_DIR"
     - cd "$WORK_DIR"
-    - test -n "$GIT_TOKEN" || { echo "GIT_TOKEN не установлен!"; exit 1; }
-    - echo "machine github.com login GIT_TOKEN password $GIT_TOKEN" > ~/.netrc
+  # - test -n "$GIT_TOKEN" || { echo "GIT_TOKEN не установлен!"; exit 1; }
+  # - echo "machine github.com login GIT_TOKEN password $GIT_TOKEN" > ~/.netrc
     - if [ ! -d "$REPO_DIR/.git" ]; then
         echo "Клонируем репозиторий...";
         git clone "$REPO_URL";
