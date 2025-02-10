@@ -42,8 +42,8 @@ build_html:
     - echo "Создаем/обновляем $HTML_FILE..."
     - echo > "$HTML_FILE" "Hello SDL"
     - echo "Добавляем и отправляем изменения в репозиторий..."
-    - git config --global user.email "gitlab-ci@example.com"
-    - git config --global user.name "GitLab CI"
+    #- git config --global user.email "gitlab-ci@example.com"
+    #- git config --global user.name "GitLab CI"
     - git add "$HTML_FILE"
     - git commit -m "Update in Apache homescreen" || echo "No changes to commit"
     - git push origin main
