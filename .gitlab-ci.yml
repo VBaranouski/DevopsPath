@@ -13,7 +13,7 @@ variables:
 
 default:
     tags:
-    - docker-runner
+    - Ubuntu2-shell
     retry: 2
     timeout: 30m  # Максимальное время выполнения (30 минут)
 
