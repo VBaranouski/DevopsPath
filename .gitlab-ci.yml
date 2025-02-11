@@ -17,7 +17,7 @@ default:
     tags:
     - Ubuntu2-shell
     retry: 2
-    timeout: 30m  # Максимальное время выполнения
+    timeout: 5m
 
 clone_repo:
   stage: clone
