@@ -38,7 +38,6 @@ clone_repo:
 
 
 build_html:
-  build_html:
   stage: build
   tags:
     - Ubuntu2-shell
