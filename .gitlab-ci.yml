@@ -1,7 +1,7 @@
 stages:
   - clone
   - build
- # - deploy
+  - deploy
 
 variables:
   WORK_DIR: "/tmp/Repo"
