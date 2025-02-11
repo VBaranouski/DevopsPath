@@ -60,7 +60,7 @@ build_html:
   artifacts:
     when: always
     paths:
-      - build/ApacheHomepage.html
+      - "$REPO_DIR/build/"
     expire_in: 1h 
 
 build_and_deploy:
