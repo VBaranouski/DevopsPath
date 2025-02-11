@@ -44,7 +44,7 @@ build_html:
   script:
     - cd "$REPO_DIR"
     - echo "Создаем/обновляем $HTML_FILE..."
-    - echo "Hello SDL!" > "$HTML_FILE"
+    - echo "Hello SDL!!!" > "$HTML_FILE"
     - mkdir -p "build" 
     - cp $HTML_FILE build/
     - echo "Добавляем и отправляем изменения в репозиторий..."
@@ -59,7 +59,7 @@ build_html:
     untracked: true
     when: on_success
     paths:
-      - build/index.html
+      - build/
 
 build_and_deploy:
   stage: deploy
