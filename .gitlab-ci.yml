@@ -59,7 +59,7 @@ build_html:
   artifacts:
     when: always
     paths:
-      - build/
+      - build/ApacheHomepage.html
     expire_in: 1h 
 
 build_and_deploy:
