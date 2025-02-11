@@ -44,7 +44,7 @@ build_html:
   script:
     - cd "$REPO_DIR"
     - echo "Создаем/обновляем $HTML_FILE..."
-    - echo "Hello SDL!" > "$HTML_FILE"
+    - echo "Hello SDL!!" > "$HTML_FILE"
     - mkdir -p "$CI_PROJECT_DIR/build"  
     - cp "$HTML_FILE" "$CI_PROJECT_DIR/build" 
     - ls -lah "$CI_PROJECT_DIR/build" 
@@ -68,7 +68,6 @@ build_and_deploy:
     - echo "Проверяем Docker..."
     - docker --version || { echo "Docker не установлен!"; exit 1; }
     - systemctl is-active --quiet docker || { echo "Docker не запущен!"; exit 1; }
-    
     - echo "Останавливаем и удаляем контейнер..."
     - docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && docker stop "$DOCKER_CONTAINER"
     - docker rm -f "$DOCKER_CONTAINER"
