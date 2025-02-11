@@ -59,7 +59,7 @@ build_html:
     untracked: true
     when: on_success
     paths:
-      - build/$HTML_FILE
+      - build/index.html
 
 build_and_deploy:
   stage: deploy
