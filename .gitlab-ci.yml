@@ -55,7 +55,6 @@ build_html:
     - git add "$HTML_FILE"
     - git commit -m "Update in Apache homescreen" || echo "No changes to commit"
     - git push origin main
-    - 
   only:
     - main
   artifacts:
