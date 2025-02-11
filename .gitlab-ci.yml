@@ -1,7 +1,7 @@
 stages:
   - clone
   - build
-  - deploy
+ # - deploy
 
 variables:
   WORK_DIR: "/tmp/Repo"
@@ -45,6 +45,7 @@ build_html:
     - cd "$REPO_DIR"
     - echo "Создаем/обновляем $HTML_FILE..."
     - echo "Hello SDL!" > "$HTML_FILE"
+    - pwd
     - mkdir -p build  
     - cp "$HTML_FILE" build/
     - ls -lah build/
