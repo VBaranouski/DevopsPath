@@ -15,7 +15,7 @@ variables:
 
 default:
     tags:
-    - Ubuntu2-shell, ubuntu-shell
+    - "Ubuntu2-shell", "ubuntu-shell"
     retry: 2
     timeout: 5m
 
