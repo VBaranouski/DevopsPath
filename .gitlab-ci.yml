@@ -46,21 +46,22 @@ build_html:
     - echo "Создаем/обновляем $HTML_FILE..."
     - echo "Hello SDL!" > "$HTML_FILE"
     - pwd
-    - mkdir -p build  
-    - cp "$HTML_FILE" build/
-    - ls -lah build/
+    - mkdir -p "$CI_PROJECT_DIR/build"  
+    - cp "$HTML_FILE" "$CI_PROJECT_DIR/build" 
+    - ls -lah "$CI_PROJECT_DIR/build" 
     - echo "Добавляем и отправляем изменения в репозиторий..."
     - git config --global user.email "$GIT_USER_EMAIL"
     - git config --global user.name "$GIT_USER"
     - git add "$HTML_FILE"
     - git commit -m "Update in Apache homescreen" || echo "No changes to commit"
     - git push origin main
+    - 
   only:
     - main
   artifacts:
     when: always
     paths:
-      - "$REPO_DIR/build/"
+      - build/
     expire_in: 1h 
 
 build_and_deploy:
