@@ -40,8 +40,6 @@ clone_repo:
 
 build_html:
   stage: build
-  tags:
-    - Ubuntu2-shell
   script:
     - cd "$REPO_DIR"
     - echo "Создаем/обновляем $HTML_FILE..."
