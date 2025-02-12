@@ -1,0 +1,70 @@
+variables:
+  WORK_DIR: "/tmp/Repo"
+  REPO_URL: "https://$GIT_TOKEN@github.com/VBaranouski/DevopsPath.git"
+  GIT_USER: "gitlab_runner"
+  GIT_USER_EMAIL: "gitlab_runner@gitlab.com"
+  REPO_DIR: "$WORK_DIR/DevopsPath"
+  HTML_FILE: "ApacheHomepage.html"
+  DOCKER_IMAGE: "docker_hello"
+  DOCKER_CONTAINER: "privet_sdl"
+
+clone_repo:
+  stage: clone
+  script:
+    - echo "Создание папки для репозиториев..."
+    - mkdir -p "$WORK_DIR"
+    - cd "$WORK_DIR"
+    - if [ ! -d "$REPO_DIR/.git" ]; then
+        echo "Клонируем репозиторий...";
+        git clone "$REPO_URL";
+      else
+        echo "Обновляем репозиторий...";
+        cd "$REPO_DIR";
+        git pull;
+      fi
+
+tests:
+    stage: unit_tests
+    script:
+        - echo "Tests are passed!"
+
+build_html:
+  stage: build
+  script:
+    - |
+      if [ "$ENVIRONMENT" == "PRD" ]; then
+        echo "Pipeline stopped, environment is a 'PRD'."
+        exit 1
+      fi
+    - cd "$REPO_DIR"
+    - echo "Создаем/обновляем $HTML_FILE..."
+    - echo "$NAME, $ENVIRONMENT, $PAGE_TEXT" > "$HTML_FILE"
+    - cat "$HTML_FILE"
+
+
+push_to_repo:
+  stage: push
+  script:
+    - cd "$REPO_DIR"
+    - echo "Добавляем и отправляем изменения в репозиторий..."
+    - git config --global user.email "$GIT_USER_EMAIL"
+    - git config --global user.name "$GIT_USER"
+    - git add "$HTML_FILE"
+    - git commit -m "Update in Apache homescreen" || echo "No changes to commit"
+
+
+build_and_deploy:
+  stage: deploy
+  script:
+    - echo "Проверяем Docker..."
+    - docker --version || { echo "Docker не установлен!"; exit 1; }
+    - systemctl is-active --quiet docker || { echo "Docker не запущен!"; exit 1; }
+    - echo "Останавливаем и удаляем контейнер..."
+    - docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && docker stop "$DOCKER_CONTAINER"
+    - docker rm -f "$DOCKER_CONTAINER"
+    - docker rmi -f "$DOCKER_IMAGE" || echo "No image to remove"
+    - echo "Собираем Docker-образ..."
+    - cd "$REPO_DIR" && docker build -t "$DOCKER_IMAGE" .
+    - echo "Запускаем Docker-контейнер..."
+    - docker run -d --name "$DOCKER_CONTAINER" -p 8090:80 "$DOCKER_IMAGE"
+    - docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && echo "Контейнер запущен на порту 8090"
