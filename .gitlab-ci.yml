@@ -1,79 +1,52 @@
-stages:
-  - clone
-  - build
-  - deploy
+include:
+    - local: '.gitlab-tmpl-homepage-deploy.yml'
 
-variables:
-  WORK_DIR: "/tmp/Repo"
-  REPO_URL: "https://$GIT_TOKEN@github.com/VBaranouski/DevopsPath.git"
-  GIT_USER: "gitlab_runner"
-  GIT_USER_EMAIL: "gitlab_runner@gitlab.com"
-  REPO_DIR: "$WORK_DIR/DevopsPath"
-  HTML_FILE: "ApacheHomepage.html"
-  DOCKER_IMAGE: "docker_hello"
-  DOCKER_CONTAINER: "privet_sdl"
+workflow:
+  rules:
+   - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+   - when: always
 
 default:
     tags:
-    - docker-runner
+    - ubuntu-shell
     retry: 2
-    timeout: 5m
+    timeout: 1m
 
-clone_repo:
-  stage: clone
-  script:
-    - echo "Создание папки для репозиториев..."
-    - mkdir -p "$WORK_DIR"
-    - cd "$WORK_DIR"
-    - if [ ! -d "$REPO_DIR/.git" ]; then
-        echo "Клонируем репозиторий...";
-        git clone "$REPO_URL";
-      else
-        echo "Обновляем репозиторий...";
-        cd "$REPO_DIR";
-        git pull;
+variables:
+    NAME: "vasya"
+    PAGE_TEXT: "Hello from reusable workflow"
+    ENVIRONMENT:
+      value: DEV
+      options:
+      - DEV
+      - STG
+      - PRD
+
+stages:
+  - validate
+  - clone
+  - unit_tests
+  - build
+  - push
+  - deploy
+ 
+
+validate_params:
+    stage: validate
+    script:
+    - |
+      if [ -z "$ENVIRONMENT" ]; then
+        echo "ENV is not defined"
+        exit 1
       fi
-  only:
-    - main
-
-
-build_html:
-  stage: build
-  script:
-    - cd "$REPO_DIR"
-    - echo "Создаем/обновляем $HTML_FILE..."
-    - echo "Hello SDL!!" > "$HTML_FILE"
-    - mkdir -p "$CI_PROJECT_DIR/build"  
-    - cp "$HTML_FILE" "$CI_PROJECT_DIR/build" 
-    - ls -lah "$CI_PROJECT_DIR/build" 
-    - echo "Добавляем и отправляем изменения в репозиторий..."
-    - git config --global user.email "$GIT_USER_EMAIL"
-    - git config --global user.name "$GIT_USER"
-    - git add "$HTML_FILE"
-    - git commit -m "Update in Apache homescreen" || echo "No changes to commit"
-    - git push origin main
-  only:
-    - main
-  artifacts:
-    when: always
-    paths:
-      - build/
-    expire_in: 1h 
-
-build_and_deploy:
-  stage: deploy
-  script:
-    - echo "Проверяем Docker..."
-    - docker --version || { echo "Docker не установлен!"; exit 1; }
-    - systemctl is-active --quiet docker || { echo "Docker не запущен!"; exit 1; }
-    - echo "Останавливаем и удаляем контейнер..."
-    - docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && docker stop "$DOCKER_CONTAINER"
-    - docker rm -f "$DOCKER_CONTAINER"
-    - docker rmi -f "$DOCKER_IMAGE" || echo "No image to remove"
-    - echo "Собираем Docker-образ..."
-    - cd "$REPO_DIR" && docker build -t "$DOCKER_IMAGE" .
-    - echo "Запускаем Docker-контейнер..."
-    - docker run -d --name "$DOCKER_CONTAINER" -p 8090:80 "$DOCKER_IMAGE"
-    - docker ps -q --filter "name=$DOCKER_CONTAINER" | grep -q . && echo "Контейнер запущен на порту 8090"
-  only:
-    - main
+      if [[ "$CI_PIPELINE_SOURCE" == "web" ]]; then
+        export NAME="${NAME:-Vlad}"
+        export PAGE_TEXT="${PAGE_TEXT:-Привет из шаблона пайплайна}"
+      else
+        export NAME="${NAME:-Default auto name}"
+        export PAGE_TEXT="${PAGE_TEXT:-Default auto text}"
+      fi
+    - echo "Переменные:"
+    - echo "ENVIRONMENT=$ENVIRONMENT"
+    - echo "NAME=$NAME"
+    - echo "PAGE_TEXT=$PAGE_TEXT"
